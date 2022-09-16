@@ -1,10 +1,19 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter/physics.dart';
 import 'package:flutter/services.dart';
 import 'package:my_first_app/models/catalog.dart';
+import 'package:my_first_app/utils/routes.dart';
 import 'package:my_first_app/widgets/drawer.dart';
 import 'package:my_first_app/widgets/item_widget.dart';
+import 'package:my_first_app/widgets/themes.dart';
+import 'package:velocity_x/velocity_x.dart';
+
+import 'home_widgets/catalog_header.dart';
+import 'home_widgets/catalog_image.dart';
+import 'home_widgets/catalog_list.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -37,22 +46,27 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Catalog App"),
-      ),
-      body: (CatalogModel.products != null && CatalogModel.products.isNotEmpty)
-          ? ListView.builder(
-              itemCount: CatalogModel.products.length,
-              itemBuilder: (context, index) {
-                return ItemWidget(
-                  item: CatalogModel.products[index],
-                );
-              },
-            )
-          : Center(
-              child: CircularProgressIndicator(),
+        backgroundColor: MyTheme.creamColor,
+        floatingActionButton: FloatingActionButton(
+          onPressed: () => Navigator.pushNamed(context, MyRoutes.cartRoute),
+          backgroundColor: MyTheme.darkBluishColor,
+          child: Icon(CupertinoIcons.cart),
+        ),
+        body: SafeArea(
+          child: Container(
+            padding: Vx.m32,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                CatalogHeader(),
+                if (CatalogModel.products != null &&
+                    CatalogModel.products.isNotEmpty)
+                  CatalogList().expand()
+                else
+                  CircularProgressIndicator().centered().py16(),
+              ],
             ),
-      drawer: MyDrawer(),
-    );
+          ),
+        ));
   }
 }
